@@ -642,7 +642,9 @@ html { scroll-behavior: smooth; }
 
       <div class="note-box" id="noteBox">
         <div class="note-title">✦ ملاحظة</div>
-        <div id="noteText"></div>
+        <div id="noteText">
+            <p>لمعرفة سبب حجب بعض المواد والحلول المتاحة سيكون من خلال جلسة فردية مع اللجنة يوم الجمعة 13 مارس الساعة 11 امام مكتب أبونا شينوتى</p>
+        </div>
       </div>
 
     </div>
@@ -740,6 +742,14 @@ function searchStudent() {
 
   document.getElementById('gradesSection').style.display = 'block';
 
+
+ 
+  // Show note
+  const noteBox = document.getElementById('noteBox');
+  noteBox.style.display = 'block';
+  document.getElementById('noteText').innerHTML = 
+    'لمعرفة سبب حجب بعض المواد والحلول المتاحة سيكون من خلال جلسة فردية مع اللجنة يوم الجمعة 13 مارس الساعة 11 امام مكتب أبونا شينوتى';
+ 
   // Scroll to result
   setTimeout(() => {
     document.getElementById('studentResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
