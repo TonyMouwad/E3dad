@@ -1,296 +1,756 @@
 <!DOCTYPE html>
-<html lang="ar">
-
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نتيجة الطالب</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>نتيجة الطلاب - خدمة إعداد خدام</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
 
-        body {
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-            direction: rtl;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
+:root {
+  --gold: #c9a227;
+  --gold-light: #e8c84a;
+  --gold-dark: #9a7a18;
+  --deep-blue: #0a0f1e;
+  --navy: #0d1b3e;
+  --dark: #060a12;
+  --cream: #f5efe0;
+  --ivory: #faf6ed;
+  --crimson: #8b1a1a;
+  --text-light: #e8dcc8;
+  --pass-green: #1a4a2e;
+  --fail-red: #4a1a1a;
+  --hidden-blue: #1a2a4a;
+}
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-        h2 {
-            color: #333;
-            margin-bottom: 15px;
-        }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-            position: relative;
-        }
+/* Coptic cross pattern background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(ellipse at 20% 20%, rgba(201,162,39,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(139,26,26,0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(13,27,62,0.5) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-        input {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            font-size: 16px;
-            width: 100%;
-        }
+/* Decorative top border */
+.top-ornament {
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, 
+    transparent, var(--gold-dark), var(--gold), var(--gold-light), 
+    var(--gold), var(--gold-dark), transparent);
+  position: relative;
+}
 
-        .password-wrapper {
-            position: relative;
-            width: 100%;
-        }
+.top-ornament::after {
+  content: '✝ ✝ ✝';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 8px;
+  white-space: nowrap;
+}
 
-        .password-wrapper input {
-            padding-right: 40px;
-        }
+.wrapper {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  padding: 20px 12px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-        .toggle-icon {
-            position: absolute;
-            top: 50%;
-            left: 10px;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-        }
+/* Church header */
+.church-header {
+  text-align: center;
+  padding: 30px 20px 20px;
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+}
 
-        .toggle-icon img {
-            width: 100%;
-            height: 100%;
-            filter: grayscale(100%);
-            transition: filter 0.3s;
-        }
+.coptic-cross-svg {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 15px;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(201,162,39,0.6));
+  animation: glow-pulse 3s ease-in-out infinite;
+}
 
-        .toggle-icon img:hover {
-            filter: grayscale(0%);
-        }
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(201,162,39,0.4)); }
+  50% { filter: drop-shadow(0 0 20px rgba(201,162,39,0.8)); }
+}
 
-        button {
-            padding: 10px;
-            background: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.3s;
-        }
+.divider-ornament {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  justify-content: center;
+}
 
-        button:hover {
-            background: #0056b3;
-        }
+.divider-ornament::before,
+.divider-ornament::after {
+  content: '';
+  flex: 1;
+  max-width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
 
-        #studentName {
-            font-size: 20px;
-            font-weight: bold;
-            color: #222;
-            margin-top: 20px;
-        }
+.divider-ornament::after {
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
 
-        #studentStatus {
-            font-size: 18px;
-            color: #555;
-            margin-top: 10px;
-        }
+.divider-ornament span {
+  color: var(--gold);
+  font-size: 14px;
+}
 
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            border-radius: 10px;
-            overflow: hidden;
-        }
+.church-header h1 {
+  font-family: 'Amiri', serif;
+  font-size: 26px;
+  color: var(--gold-light);
+  font-weight: 700;
+  line-height: 1.4;
+  text-shadow: 0 2px 10px rgba(201,162,39,0.4);
+}
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-        }
+.church-header h2 {
+  font-size: 15px;
+  color: var(--cream);
+  margin-top: 6px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
 
-        th {
-            background: #007BFF;
-            color: white;
-        }
+.church-header p {
+  font-size: 13px;
+  color: rgba(232,220,200,0.6);
+  margin-top: 4px;
+}
 
-        .weak-attendance {
-            background-color: #ADD8E6;
-        }
+/* Main card */
+.card {
+  background: linear-gradient(160deg, 
+    rgba(255,255,255,0.05) 0%, 
+    rgba(13,27,62,0.4) 50%,
+    rgba(255,255,255,0.03) 100%);
+  border: 1px solid rgba(201,162,39,0.25);
+  border-radius: 20px;
+  padding: 28px 22px;
+  width: 100%;
+  max-width: 500px;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 25px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(201,162,39,0.2),
+    0 0 40px rgba(201,162,39,0.04);
+  position: relative;
+  overflow: hidden;
+}
 
-        .weak-exam {
-            background-color: #f7cb91;
-        }
+.card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(201,162,39,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
 
-        .fail {
-            background-color: #f9ada3;
-        }
+/* Input section */
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-        .pass {
-            background-color: #c9f8d4;
-        }
+.input-group {
+  position: relative;
+}
 
-        @media (max-width: 600px) {
-            .container {
-                width: 90%;
-            }
+.input-label {
+  display: block;
+  font-size: 12px;
+  color: var(--gold);
+  margin-bottom: 7px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
 
-            input,
-            button {
-                font-size: 14px;
-            }
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,162,39,0.2);
+  border-radius: 12px;
+  color: var(--cream);
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  outline: none;
+  -webkit-appearance: none;
+}
 
-            table {
-                font-size: 14px;
-            }
-        }
-    </style>
+.input-field::placeholder {
+  color: rgba(232,220,200,0.3);
+}
+
+.input-field:focus {
+  border-color: var(--gold);
+  background: rgba(201,162,39,0.06);
+  box-shadow: 0 0 0 3px rgba(201,162,39,0.1), 0 4px 20px rgba(0,0,0,0.2);
+}
+
+/* Search button */
+.search-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light), var(--gold));
+  background-size: 200% auto;
+  color: var(--dark);
+  font-family: 'Cairo', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 25px rgba(201,162,39,0.3);
+  margin-top: 4px;
+}
+
+.search-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.search-btn:hover::before { left: 100%; }
+.search-btn:hover { 
+  background-position: right center;
+  box-shadow: 0 8px 30px rgba(201,162,39,0.5);
+  transform: translateY(-2px);
+}
+
+.search-btn:active { transform: translateY(0); }
+
+/* Student result card */
+.student-result {
+  margin-top: 24px;
+  display: none;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.student-header {
+  background: linear-gradient(135deg, rgba(201,162,39,0.15), rgba(139,26,26,0.1));
+  border: 1px solid rgba(201,162,39,0.3);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.student-header::before {
+  content: '✝';
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(201,162,39,0.2);
+  font-size: 28px;
+}
+
+.student-header::after {
+  content: '✝';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(201,162,39,0.2);
+  font-size: 28px;
+}
+
+.student-name-display {
+  font-family: 'Amiri', serif;
+  font-size: 22px;
+  color: var(--gold-light);
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(201,162,39,0.3);
+}
+
+.student-id-display {
+  font-size: 12px;
+  color: rgba(232,220,200,0.5);
+  margin-top: 4px;
+}
+
+/* Error message */
+.error-msg {
+  color: #ff6b6b;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px;
+  background: rgba(255,107,107,0.1);
+  border: 1px solid rgba(255,107,107,0.2);
+  border-radius: 10px;
+  display: none;
+  margin-top: 16px;
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Warning message (تذكية) */
+.warning-msg {
+  color: var(--gold-light);
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px;
+  background: rgba(201,162,39,0.1);
+  border: 1px solid rgba(201,162,39,0.3);
+  border-radius: 10px;
+  display: none;
+  margin-top: 16px;
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Grades table */
+.grades-section {
+  display: none;
+}
+
+.section-title {
+  font-size: 12px;
+  color: rgba(232,220,200,0.5);
+  text-align: center;
+  margin-bottom: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.grade-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  animation: slideIn 0.4s ease forwards;
+  opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.grade-card:hover { transform: translateX(-3px); }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.grade-card:nth-child(1) { animation-delay: 0.05s; }
+.grade-card:nth-child(2) { animation-delay: 0.1s; }
+.grade-card:nth-child(3) { animation-delay: 0.15s; }
+.grade-card:nth-child(4) { animation-delay: 0.2s; }
+.grade-card:nth-child(5) { animation-delay: 0.25s; }
+.grade-card:nth-child(6) { animation-delay: 0.3s; }
+
+.grade-card.pass {
+  border-color: rgba(52,168,83,0.3);
+  background: rgba(52,168,83,0.07);
+}
+.grade-card.fail {
+  border-color: rgba(234,67,53,0.3);
+  background: rgba(234,67,53,0.07);
+}
+.grade-card.hidden {
+  border-color: rgba(66,133,244,0.3);
+  background: rgba(66,133,244,0.07);
+}
+
+.grade-card::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 0 12px 12px 0;
+}
+
+.grade-card.pass::before { background: #34a853; }
+.grade-card.fail::before { background: #ea4335; }
+.grade-card.hidden::before { background: #4285f4; }
+
+.subject-name {
+  font-size: 14px;
+  color: var(--cream);
+  font-weight: 600;
+  flex: 1;
+}
+
+.score-badge {
+  font-family: 'Amiri', serif;
+  font-size: 20px;
+  font-weight: 700;
+  min-width: 44px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.status-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.pass .status-pill { background: rgba(52,168,83,0.2); color: #6dd58c; border: 1px solid rgba(52,168,83,0.3); }
+.fail .status-pill { background: rgba(234,67,53,0.2); color: #ff8a80; border: 1px solid rgba(234,67,53,0.3); }
+.hidden .status-pill { background: rgba(66,133,244,0.2); color: #82b1ff; border: 1px solid rgba(66,133,244,0.3); }
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: rgba(232,220,200,0.5);
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Note box */
+.note-box {
+  display: none;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(201,162,39,0.08);
+  border: 1px solid rgba(201,162,39,0.25);
+  font-size: 13px;
+  color: var(--cream);
+  line-height: 1.7;
+}
+
+.note-title {
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  padding: 20px;
+  font-size: 11px;
+  color: rgba(232,220,200,0.25);
+  letter-spacing: 1px;
+}
+
+.footer-cross {
+  color: rgba(201,162,39,0.3);
+  margin: 0 6px;
+}
+
+/* Scroll into view smoothly */
+html { scroll-behavior: smooth; }
+
+/* Loading spinner */
+.loading {
+  display: none;
+  text-align: center;
+  padding: 20px;
+  color: var(--gold);
+  font-size: 13px;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(201,162,39,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+</style>
 </head>
-
 <body>
 
-    <div class="container">
-        <img src="habib gerges.jpg" sizes="width=50%" style="width: 80%; height: 50%;">
-        <h4>+++++++++++++++++++++</h4><br>
-        <h2>نتيجة الترم الأول فصل إعداد خدام</h2>
-        <h2>دفعة البابا شنودة الثالث</h2>
-        <h4>+++++++++++++++++++++</h4>
-        <br><br>
+<div class="top-ornament"></div>
 
-        <div class="input-group">
-            <input type="number" id="studentId" placeholder=" أدخل الكود">
+<div class="wrapper">
 
-            <div class="password-wrapper">
-                <input type="password" id="myInput" placeholder="أدخل كلمة السر">
-                <div class="toggle-icon" onclick="togglePassword()">
-                    <img id="eyeIcon" src="https://cdn-icons-png.flaticon.com/512/565/565655.png" alt="Show/Hide">
-                </div>
-            </div>
+  <!-- Church Header -->
+  <div class="church-header">
 
-            <button onclick="searchStudent()">بحث</button>
-        </div>
+            <img src="logo.png" sizes="width=50%"  class="coptic-cross-svg" style="width: 80%; height: 50%;">
 
-        <h2 id="studentName"></h2>
-        <h3 id="studentStatus"></h3>
-        <h3 id="Status"></h3>
-        <p id="statusMessage" style="color: red; font-weight: bold;"></p>
+    <!-- Coptic Ankh Cross SVG -->
+    <!-- <svg class="coptic-cross-svg" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg"> -->
+      <!-- Ankh loop -->
+      <ellipse cx="50" cy="28" rx="18" ry="22" stroke="#c9a227" stroke-width="6" fill="none"/>
+      <!-- Vertical bar -->
+      <line x1="50" y1="50" x2="50" y2="115" stroke="#c9a227" stroke-width="7" stroke-linecap="round"/>
+      <!-- Horizontal bar -->
+      <line x1="18" y1="68" x2="82" y2="68" stroke="#c9a227" stroke-width="7" stroke-linecap="round"/>
+      <!-- Small decorative dots -->
+      <circle cx="50" cy="28" r="4" fill="#e8c84a"/>
+      <circle cx="18" cy="68" r="3" fill="#c9a227"/>
+      <circle cx="82" cy="68" r="3" fill="#c9a227"/>
+    </svg>
 
-        <table id="resultTable" style="display: none;">
-            <thead>
-                <tr>
-                    <th>المادة</th>
-                    <th>الدرجة</th>
-                    <th>الحالة</th>
-                </tr>
-            </thead>
-            <tbody id="gradesTable"></tbody>
-        </table>
-        <h3 id="note"></h3>
+    <h1>خدمة إعداد خدام</h1>
+    <div class="divider-ornament"><span>✦</span></div>
+    <h2>دفعة البابا شنودة الثالث</h2>
+    <p>نتيجة الترم الأول</p>
+  </div>
+
+  <!-- Main Card -->
+  <div class="card">
+
+    <div class="input-section">
+
+      <div class="input-group">
+        <label class="input-label" for="studentId">كود الطالب</label>
+        <input
+          class="input-field"
+          type="number"
+          id="studentId"
+          placeholder="أدخل الكود هنا"
+          inputmode="numeric"
+        >
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" for="studentCode">كلمة السر</label>
+        <input
+          class="input-field"
+          type="password"
+          id="studentCode"
+          placeholder="أدخل كلمة السر"
+          autocomplete="off"
+        >
+      </div>
+
+      <button class="search-btn" onclick="searchStudent()">
+        ✝ &nbsp; عرض النتيجة
+      </button>
+
     </div>
 
-    <script>
-        // زر إظهار / إخفاء كلمة المرور
-        function togglePassword() {
-            const input = document.getElementById("myInput");
-            const icon = document.getElementById("eyeIcon");
+    <!-- Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      جارٍ البحث...
+    </div>
 
-            if (input.type === "password") {
-                input.type = "text";
-                icon.src = "https://cdn-icons-png.flaticon.com/512/709/709612.png"; // open eye
-            } else {
-                input.type = "password";
-                icon.src = "https://cdn-icons-png.flaticon.com/512/565/565655.png"; // closed eye
-            }
-        }
+    <!-- Error -->
+    <div class="error-msg" id="errorMsg">⚠ لم يتم العثور على الطالب</div>
 
-        //        let students = ;
-        let students =[{"name":"الإسم","code":"الكود","pass":"الرقم السرى","phone":"رقم التليفون","status":"التذكية","score1":"تنمية مهارات","result1":"الحالة","score2":"لاهوت مقارن جزء أول","result2":"الحالة","score3":"لاهوت روحى","result3":"الحالة","score4":"عقيدة جزء أول","result4":"الحالة","score5":"عقيدة جزء ثانى","result5":"الحالة","score6":"تاريخ كنيسة","result6":"الحالة "},{"name":"باسم وائل ناجح","code":"24004","pass":"P4178","phone":"201221084098","status":"تمام","score1":"23","result1":"محجوبة","score2":"22","result2":"راسب","score3":"29","result3":"راسب","score4":"19","result4":"محجوبة","score5":"20","result5":"راسب","score6":"25","result6":"راسب "},{"name":"بافلي رافت فوزي","code":"24005","pass":"P9356","phone":"201271861999","status":"تمام","score1":"0","result1":"محجوبة","score2":"15","result2":"راسب","score3":"4","result3":"محجوبة","score4":"0","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"8","result6":"محجوبة "},{"name":"ساندي سامي ملك","code":"24015","pass":"P4786","phone":"201270464291","status":"تمام","score1":"0","result1":"محجوبة","score2":"11","result2":"راسب","score3":"15","result3":"راسب","score4":"0","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"شيرى عازر جاد","code":"24017","pass":"P9504","phone":"201229682400","status":"تمام","score1":"0","result1":"محجوبة","score2":"11","result2":"محجوبة","score3":"22","result3":"راسب","score4":"10","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"كريم صبرى نصيف","code":"24021","pass":"P8297","phone":"201229960632","status":"تمام","score1":"48","result1":"ناجح","score2":"32","result2":"ناجح","score3":"51","result3":"ناجح","score4":"41","result4":"محجوبة","score5":"43","result5":"ناجح","score6":"43","result6":"محجوبة "},{"name":"ماريان ناصر سمير","code":"24025","pass":"P7526","phone":"201227094728","status":"تمام","score1":"36","result1":"محجوبة","score2":"11","result2":"راسب","score3":"0","result3":"محجوبة","score4":"0","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"يوسف اسامة فوزي","code":"24033","pass":"P2407","phone":"201207277509","status":"تمام","score1":"34","result1":"محجوبة","score2":"32","result2":"ناجح","score3":"46","result3":"ناجح","score4":"24","result4":"محجوبة","score5":"30","result5":"راسب","score6":"29","result6":"محجوبة "},{"name":"فيولا منير عطية","code":"24038","pass":"P8059","phone":"201208803058","status":"تمام","score1":"45","result1":"محجوبة","score2":"11","result2":"راسب","score3":"30","result3":"راسب","score4":"13","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"جورج سمير عاطف","code":"24040","pass":"P1222","phone":"201229794639","status":"تمام","score1":"48","result1":"ناجح","score2":"39","result2":"ناجح","score3":"44","result3":"ناجح","score4":"26","result4":"محجوبة","score5":"37","result5":"ناجح","score6":"53","result6":"ناجح "},{"name":"ابانوب عماد موسي","code":"25002","pass":"P4509","phone":"201288225036","status":"تمام","score1":"26","result1":"محجوبة","score2":"17","result2":"راسب","score3":"36","result3":"راسب","score4":"18","result4":"محجوبة","score5":"40","result5":"ناجح","score6":"18","result6":"محجوبة "},{"name":"ايريني اشرف جرجس","code":"25006","pass":"P4738","phone":"201288199329","status":"تمام","score1":"0","result1":"محجوبة","score2":"11","result2":"راسب","score3":"0","result3":"محجوبة","score4":"0","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"توماس هشام بدر","code":"25011","pass":"P3705","phone":"201274865896","status":"تمام","score1":"41","result1":"محجوبة","score2":"28","result2":"راسب","score3":"41","result3":"راسب","score4":"15","result4":"محجوبة","score5":"47","result5":"ناجح","score6":"37","result6":"محجوبة "},{"name":"ساندرا عزمي عزت","code":"25021","pass":"P6298","phone":"201278963635","status":"تمام","score1":"30","result1":"راسب","score2":"25","result2":"راسب","score3":"38","result3":"راسب","score4":"36","result4":"ناجح","score5":"23","result5":"راسب","score6":"20","result6":"محجوبة "},{"name":"ساندرا فادي فتحي ","code":"25022","pass":"P7045","phone":"201220682880","status":"تمام","score1":"46","result1":"ناجح","score2":"35","result2":"ناجح","score3":"48","result3":"ناجح","score4":"26","result4":"محجوبة","score5":"40","result5":"ناجح","score6":"8","result6":"محجوبة "},{"name":"سيلفيا سمير صبحي","code":"25025","pass":"P2743","phone":"201285942121","status":"تمام","score1":"30","result1":"محجوبة","score2":"32","result2":"ناجح","score3":"45","result3":"ناجح","score4":"30","result4":"محجوبة","score5":"46","result5":"ناجح","score6":"36","result6":"محجوبة "},{"name":"سيلفيا عزمي عزت","code":"25026","pass":"P5081","phone":"201276977658","status":"تمام","score1":"57","result1":"ناجح","score2":"46","result2":"محجوبة","score3":"60","result3":"ناجح","score4":"45","result4":"ناجح","score5":"55","result5":"ناجح","score6":"44","result6":"محجوبة "},{"name":"شيري فليمون ناجح","code":"25027","pass":"P4198","phone":"201226160913","status":"تمام","score1":"33","result1":"محجوبة","score2":"41","result2":"ناجح","score3":"52","result3":"ناجح","score4":"45","result4":"ناجح","score5":"55","result5":"ناجح","score6":"57","result6":"ناجح "},{"name":"فادي سمير سعيد","code":"25028","pass":"P8264","phone":"201270573322","status":"تمام","score1":"40","result1":"محجوبة","score2":"11","result2":"راسب","score3":"26","result3":"راسب","score4":"34","result4":"محجوبة","score5":"33","result5":"محجوبة","score6":"8","result6":"محجوبة "},{"name":"فيرينا اميل جورجي","code":"25029","pass":"P1623","phone":"201227608917","status":"تمام","score1":"24","result1":"محجوبة","score2":"33","result2":"محجوبة","score3":"46","result3":"ناجح","score4":"40","result4":"ناجح","score5":"26","result5":"راسب","score6":"48","result6":"ناجح "},{"name":"كاترين عماد ملاك","code":"25031","pass":"P6342","phone":"201274488100","status":"تمام","score1":"23","result1":"محجوبة","score2":"25","result2":"محجوبة","score3":"37","result3":"راسب","score4":"10","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"6","result6":"محجوبة "},{"name":"كرستينا أشرف فهيم","code":"25032","pass":"P3041","phone":"201204883964","status":"تمام","score1":"25","result1":"راسب","score2":"26","result2":"راسب","score3":"32","result3":"راسب","score4":"0","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"6","result6":"محجوبة "},{"name":"كيرلس عادل جاد","code":"25033","pass":"P2308","phone":"201202363869","status":"تمام","score1":"20","result1":"محجوبة","score2":"16","result2":"راسب","score3":"0","result3":"محجوبة","score4":"0","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"كيرلس ناصر راضي","code":"25034","pass":"P7023","phone":"201090263369","status":"تمام","score1":"33","result1":"محجوبة","score2":"18","result2":"راسب","score3":"31","result3":"راسب","score4":"34","result4":"ناجح","score5":"37","result5":"راسب","score6":"36","result6":"محجوبة "},{"name":"مارتينا نصري بخيت","code":"25036","pass":"P6851","phone":"201220582684","status":"تمام","score1":"39","result1":"محجوبة","score2":"34","result2":"ناجح","score3":"40","result3":"ناجح","score4":"18","result4":"محجوبة","score5":"28","result5":"محجوبة","score6":"14","result6":"محجوبة "},{"name":"مرية بطرس ثابت","code":"25039","pass":"P2518","phone":"201206685456","status":"تمام","score1":"41","result1":"محجوبة","score2":"41","result2":"ناجح","score3":"55","result3":"ناجح","score4":"43","result4":"ناجح","score5":"56","result5":"ناجح","score6":"56","result6":"ناجح "},{"name":"ماريا ناجي وديع","code":"25041","pass":"P3176","phone":"201280063518","status":"تمام","score1":"26","result1":"راسب","score2":"39","result2":"ناجح","score3":"58","result3":"ناجح","score4":"37","result4":"محجوبة","score5":"42","result5":"راسب","score6":"55","result6":"ناجح "},{"name":"ماريان عادل عريان","code":"25042","pass":"P5894","phone":"201273446219","status":"تمام","score1":"4","result1":"محجوبة","score2":"34","result2":"ناجح","score3":"51","result3":"ناجح","score4":"28","result4":"محجوبة","score5":"16","result5":"راسب","score6":"8","result6":"محجوبة "},{"name":"مارينا كمال فهمي","code":"25046","pass":"P2954","phone":"201275368643","status":"تمام","score1":"39","result1":"محجوبة","score2":"34","result2":"ناجح","score3":"46","result3":"ناجح","score4":"14","result4":"محجوبة","score5":"36","result5":"ناجح","score6":"46","result6":"ناجح "},{"name":"مايكل جرجس وصفي","code":"25047","pass":"P1632","phone":"201229678186","status":"تمام","score1":"23","result1":"راسب","score2":"18","result2":"راسب","score3":"37","result3":"راسب","score4":"21","result4":"محجوبة","score5":"3","result5":"محجوبة","score6":"5","result6":"محجوبة "},{"name":"ملاك ميخائيل غطاس","code":"25050","pass":"P2603","phone":"201021746686","status":"تمام","score1":"23","result1":"محجوبة","score2":"27","result2":"راسب","score3":"41","result3":"راسب","score4":"24","result4":"راسب","score5":"19","result5":"راسب","score6":"23","result6":"محجوبة "},{"name":"ميرام رامي صبحي","code":"25053","pass":"P5239","phone":"201225039993","status":"تمام","score1":"17","result1":"محجوبة","score2":"29","result2":"محجوبة","score3":"35","result3":"ناجح","score4":"23","result4":"محجوبة","score5":"20","result5":"راسب","score6":"27","result6":"محجوبة "},{"name":"نورهان راضي حكيم","code":"25060","pass":"P4729","phone":"201270675951","status":"تمام","score1":"40","result1":"محجوبة","score2":"30","result2":"راسب","score3":"39","result3":"راسب","score4":"40","result4":"ناجح","score5":"40","result5":"ناجح","score6":"19","result6":"محجوبة "},{"name":"هيلانا جرجس ذكري","code":"25062","pass":"P3708","phone":"201274956471","status":"تمام","score1":"7","result1":"محجوبة","score2":"16","result2":"راسب","score3":"22","result3":"راسب","score4":"27","result4":"محجوبة","score5":"10","result5":"محجوبة","score6":"8","result6":"محجوبة "},{"name":"يؤانا ايمن رشدي","code":"25063","pass":"P6947","phone":"201203715638","status":"تمام","score1":"24","result1":"راسب","score2":"28","result2":"ناجح","score3":"42","result3":"ناجح","score4":"28","result4":"محجوبة","score5":"30","result5":"راسب","score6":"56","result6":"ناجح "},{"name":"يؤانا سمير بدري","code":"25064","pass":"P2035","phone":"201274140990","status":"تمام","score1":"30","result1":"راسب","score2":"32","result2":"ناجح","score3":"45","result3":"ناجح","score4":"39","result4":"ناجح","score5":"23","result5":"راسب","score6":"48","result6":"ناجح "},{"name":"يؤانا نسيم اسكندر","code":"25066","pass":"P5271","phone":"201274439547","status":"تمام","score1":"49","result1":"ناجح","score2":"45","result2":"ناجح","score3":"57","result3":"ناجح","score4":"47","result4":"ناجح","score5":"37","result5":"ناجح","score6":"53","result6":"ناجح "},{"name":"يؤانا مجدي خليل","code":"25067","pass":"P6184","phone":"201226405887","status":"تمام","score1":"10","result1":"محجوبة","score2":"23","result2":"راسب","score3":"36","result3":"راسب","score4":"10","result4":"محجوبة","score5":"9","result5":"محجوبة","score6":"27","result6":"محجوبة "},{"name":"ابانوب جرجس عبدالكريم","code":"25071","pass":"P3756","phone":"201201289573","status":"تمام","score1":"27","result1":"راسب","score2":"25","result2":"راسب","score3":"40","result3":"راسب","score4":"28","result4":"راسب","score5":"16","result5":"راسب","score6":"19","result6":"محجوبة "},{"name":"بطرس عجبان بطرس","code":"25077","pass":"P6471","phone":"201203154056","status":"تمام","score1":"46","result1":"محجوبة","score2":"36","result2":"ناجح","score3":"49","result3":"ناجح","score4":"32","result4":"ناجح","score5":"41","result5":"ناجح","score6":"17","result6":"محجوبة "},{"name":"بيشوي عطا نجيب","code":"25079","pass":"P5283","phone":"201284102878","status":"تمام","score1":"42","result1":"راسب","score2":"23","result2":"راسب","score3":"36","result3":"راسب","score4":"23","result4":"محجوبة","score5":"25","result5":"محجوبة","score6":"47","result6":"ناجح "},{"name":"جرجس رأفت صبري","code":"25082","pass":"P6574","phone":"201285391757","status":"تمام","score1":"0","result1":"محجوبة","score2":"11","result2":"راسب","score3":"0","result3":"محجوبة","score4":"0","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"ريهام رمزي فهمي","code":"25087","pass":"P8106","phone":"201281518876","status":"تمام","score1":"3","result1":"محجوبة","score2":"11","result2":"راسب","score3":"25","result3":"راسب","score4":"11","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"ساندرا سمير صبحي","code":"25089","pass":"P1342","phone":"201271002869","status":"تمام","score1":"40","result1":"محجوبة","score2":"37","result2":"ناجح","score3":"50","result3":"ناجح","score4":"43","result4":"ناجح","score5":"44","result5":"ناجح","score6":"44","result6":"ناجح "},{"name":"كاترين ايهاب ماهر","code":"25093","pass":"P8927","phone":"201286908692","status":"تمام","score1":"39","result1":"راسب","score2":"23","result2":"راسب","score3":"31","result3":"راسب","score4":"43","result4":"ناجح","score5":"42","result5":"راسب","score6":"51","result6":"ناجح "},{"name":"كرستين وجدي ناشد","code":"25094","pass":"P9283","phone":"201228072322","status":"تمام","score1":"39","result1":"راسب","score2":"29","result2":"راسب","score3":"41","result3":"راسب","score4":"25","result4":"محجوبة","score5":"39","result5":"راسب","score6":"45","result6":"محجوبة "},{"name":"كيرلس ظريف صبحي","code":"25099","pass":"P7841","phone":"201279927454","status":"تمام","score1":"36","result1":"محجوبة","score2":"34","result2":"ناجح","score3":"43","result3":"ناجح","score4":"25","result4":"محجوبة","score5":"32","result5":"ناجح","score6":"18","result6":"محجوبة "},{"name":"مادونا فتحي زاهر","code":"25100","pass":"P9604","phone":"201203826643","status":"تمام","score1":"52","result1":"ناجح","score2":"44","result2":"ناجح","score3":"56","result3":"ناجح","score4":"38","result4":"محجوبة","score5":"46","result5":"ناجح","score6":"53","result6":"ناجح "},{"name":"ماركو القمص انطون بسطة","code":"25103","pass":"P1963","phone":"201223556403","status":"تمام","score1":"29","result1":"محجوبة","score2":"38","result2":"ناجح","score3":"42","result3":"ناجح","score4":"30","result4":"محجوبة","score5":"34","result5":"محجوبة","score6":"17","result6":"محجوبة "},{"name":"مارينا اشرف فهيم","code":"25105","pass":"P5618","phone":"201272078774","status":"تمام","score1":"24","result1":"محجوبة","score2":"15","result2":"راسب","score3":"18","result3":"راسب","score4":"0","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"ماريو ميلاد اسحاق","code":"25107","pass":"P6829","phone":"201555811974","status":"تمام","score1":"20","result1":"محجوبة","score2":"16","result2":"راسب","score3":"35","result3":"راسب","score4":"12","result4":"محجوبة","score5":"30","result5":"راسب","score6":"40","result6":"ناجح "},{"name":"مريام رأفت داود","code":"25109","pass":"P3186","phone":"201289698810","status":"تمام","score1":"42","result1":"ناجح","score2":"26","result2":"راسب","score3":"39","result3":"راسب","score4":"28","result4":"محجوبة","score5":"42","result5":"ناجح","score6":"14","result6":"محجوبة "},{"name":"ميرنا عماد عطية","code":"25113","pass":"P8294","phone":"201289970235","status":"تمام","score1":"43","result1":"ناجح","score2":"23","result2":"راسب","score3":"33","result3":"راسب","score4":"32","result4":"محجوبة","score5":"48","result5":"ناجح","score6":"53","result6":"ناجح "},{"name":"مايكل عماد رمزي","code":"25118","pass":"P4721","phone":"201285250776","status":"تمام","score1":"49","result1":"ناجح","score2":"26","result2":"راسب","score3":"39","result3":"راسب","score4":"21","result4":"محجوبة","score5":"43","result5":"ناجح","score6":"39","result6":"راسب "},{"name":"جوفاني القس برسوم سامي","code":"25120","pass":"P9673","phone":"201124858063","status":"تمام","score1":"26","result1":"محجوبة","score2":"25","result2":"راسب","score3":"38","result3":"راسب","score4":"20","result4":"محجوبة","score5":"32","result5":"ناجح","score6":"49","result6":"ناجح "},{"name":"ماريز عاطف خلف","code":"25122","pass":"P8750","phone":"201224061137","status":"تمام","score1":"36","result1":"راسب","score2":"20","result2":"راسب","score3":"31","result3":"راسب","score4":"28","result4":"محجوبة","score5":"28","result5":"راسب","score6":"34","result6":"ناجح "},{"name":"رامي فرج مليكة","code":"25123","pass":"P4195","phone":"201211545613","status":"تمام","score1":"45","result1":"ناجح","score2":"43","result2":"ناجح","score3":"56","result3":"ناجح","score4":"45","result4":"ناجح","score5":"43","result5":"ناجح","score6":"42","result6":"محجوبة "},{"name":"جومانا نادر سمير","code":"25126","pass":"P6051","phone":"201222376319","status":"تمام","score1":"44","result1":"ناجح","score2":"39","result2":"ناجح","score3":"46","result3":"ناجح","score4":"33","result4":"ناجح","score5":"42","result5":"ناجح","score6":"55","result6":"ناجح "},{"name":"جورجيت نعيم شحاتة","code":"25130","pass":"P8052","phone":"201283469183","status":"تمام","score1":"28","result1":"محجوبة","score2":"22","result2":"راسب","score3":"32","result3":"راسب","score4":"31","result4":"راسب","score5":"35","result5":"راسب","score6":"14","result6":"محجوبة "},{"name":"روفينا يوسف وليم","code":"25131","pass":"P7643","phone":"201222921104","status":"تمام","score1":"25","result1":"راسب","score2":"39","result2":"ناجح","score3":"52","result3":"ناجح","score4":"36","result4":"محجوبة","score5":"8","result5":"محجوبة","score6":"14","result6":"محجوبة "},{"name":"كيرلس أشرف صبحى","code":"25132","pass":"P9405","phone":"201221277724","status":"تمام","score1":"14","result1":"محجوبة","score2":"20","result2":"راسب","score3":"27","result3":"راسب","score4":"13","result4":"محجوبة","score5":"17","result5":"راسب","score6":"36","result6":"محجوبة "},{"name":"فيلوباتير اميل جورج","code":"25135","pass":"P2850","phone":"201280075403","status":"تمام","score1":"20","result1":"محجوبة","score2":"22","result2":"راسب","score3":"13","result3":"محجوبة","score4":"25","result4":"محجوبة","score5":"13","result5":"محجوبة","score6":"18","result6":"محجوبة "},{"name":"ماريز ماجد عجيب ","code":"25143","pass":"P8497","phone":"201285519063","status":"تمام","score1":"50","result1":"ناجح","score2":"44","result2":"ناجح","score3":"53","result3":"ناجح","score4":"35","result4":"محجوبة","score5":"39","result5":"ناجح","score6":"53","result6":"ناجح "},{"name":"كيرلس اشرف سمير","code":"25147","pass":"P4285","phone":"201276764154","status":"تمام","score1":"47","result1":"ناجح","score2":"45","result2":"ناجح","score3":"53","result3":"ناجح","score4":"42","result4":"محجوبة","score5":"50","result5":"ناجح","score6":"45","result6":"محجوبة "},{"name":"ملاك سامي عبدالملك","code":"25163","pass":"P1579","phone":"201274226750","status":"تمام","score1":"49","result1":"ناجح","score2":"34","result2":"ناجح","score3":"47","result3":"ناجح","score4":"35","result4":"ناجح","score5":"49","result5":"ناجح","score6":"49","result6":"ناجح "},{"name":"شادى ايمن سمير","code":"25169","pass":"P6270","phone":"201285734426","status":"تمام","score1":"42","result1":"محجوبة","score2":"27","result2":"راسب","score3":"39","result3":"راسب","score4":"37","result4":"محجوبة","score5":"39","result5":"ناجح","score6":"50","result6":"ناجح "},{"name":"مارتينا اشرف عدلي ","code":"25171","pass":"P2917","phone":"201278764676","status":"تمام","score1":"37","result1":"محجوبة","score2":"39","result2":"ناجح","score3":"53","result3":"ناجح","score4":"25","result4":"محجوبة","score5":"44","result5":"راسب","score6":"32","result6":"محجوبة "},{"name":"مارتينا واصف موريس","code":"25176","pass":"P4129","phone":"201284706204","status":"تمام","score1":"38","result1":"ناجح","score2":"11","result2":"راسب","score3":"0","result3":"محجوبة","score4":"0","result4":"محجوبة","score5":"22","result5":"محجوبة","score6":"7","result6":"محجوبة "},{"name":"انطونيوس لابان فهمي","code":"25178","pass":"P1067","phone":"201210369376","status":"تمام","score1":"43","result1":"محجوبة","score2":"17","result2":"راسب","score3":"21","result3":"راسب","score4":"32","result4":"محجوبة","score5":"34","result5":"محجوبة","score6":"18","result6":"محجوبة "},{"name":"مارينا عزت عبد الفادى","code":"25181","pass":"P8031","phone":"201271905771","status":"تمام","score1":"28","result1":"راسب","score2":"27","result2":"راسب","score3":"33","result3":"راسب","score4":"9","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"0","result6":"محجوبة "},{"name":"كرستين هلال فوزى","code":"25187","pass":"P5617","phone":"201220947756","status":"تمام","score1":"12","result1":"محجوبة","score2":"18","result2":"راسب","score3":"27","result3":"راسب","score4":"18","result4":"محجوبة","score5":"0","result5":"محجوبة","score6":"15","result6":"محجوبة "},{"name":"ناردين ونجت فوكيه","code":"25192","pass":"P3064","phone":"201203826761","status":"تمام","score1":"10","result1":"محجوبة","score2":"23","result2":"محجوبة","score3":"30","result3":"راسب","score4":"16","result4":"محجوبة","score5":"22","result5":"محجوبة","score6":"30","result6":"محجوبة "},{"name":"جرجس هاني ثابت ","code":"25196","pass":"P1905","phone":"201228101728","status":"تمام","score1":"29","result1":"محجوبة","score2":"23","result2":"راسب","score3":"13","result3":"محجوبة","score4":"25","result4":"محجوبة","score5":"46","result5":"ناجح","score6":"49","result6":"ناجح "},{"name":"ميراى مقار القس يعقوب","code":"26100","pass":"P1111","phone":"201222202051","status":"تمام","score1":"24","result1":"محجوبة","score2":"0","result2":"محجوبة","score3":"15","result3":"راسب","score4":"31","result4":"محجوبة","score5":"36","result5":"محجوبة","score6":"35","result6":"محجوبة "},{"name":null,"code":null,"pass":null,"phone":null,"status":null,"score1":null,"result1":null,"score2":null,"result2":null,"score3":null,"result3":null,"score4":null,"result4":null,"score5":null,"result5":null,"score6":null,"result6":null},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""},{"name":"","code":"","pass":"","phone":"","status":"","score1":"","result1":"","score2":"","result2":"","score3":"","result3":"","score4":"","result4":"","score5":"","result5":"","score6":"","result6":""}];
+    <!-- Warning -->
+    <div class="warning-msg" id="warningMsg">⚠ الرجاء تسليم التذكية أولاً للاطلاع على النتيجة</div>
 
+    <!-- Student Result -->
+    <div class="student-result" id="studentResult">
 
-        function searchStudent() {
-            let inputId = document.getElementById("studentId").value;
-            let inputCode = document.getElementById("myInput").value;
-            let student;
+      <div class="student-header">
+        <div class="student-name-display" id="studentName"></div>
+        <div class="student-id-display" id="studentIdDisplay"></div>
+      </div>
 
-            if (inputCode === "OOOO") {
-                student = students.find(s => s.code == inputId);
-            } else {
-                student = students.find(s => s.pass == inputId && s.code == inputCode);
-            }
+      <div class="grades-section" id="gradesSection">
+        <div class="section-title">نتيجة المواد</div>
+        <div id="gradesList"></div>
 
-            if (student) {
-                document.getElementById("studentName").innerText = "الأسم: " + student.name;
-                //document.getElementById("studentStatus").innerText = "التذكية: " + student.status;
-                // document.getElementById("Status").innerText = "الحالة: " + student.status3;
-                // if( student.note != 0 ){document.getElementById("note").innerText = "المواد الباقية:" + student.note;}
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#34a853"></div>
+            <span>ناجح</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#ea4335"></div>
+            <span>راسب</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#4285f4"></div>
+            <span>محجوبة</span>
+          </div>
+        </div>
+      </div>
 
-                if (student.status !== "تمام" && inputCode !== "OOOO") {
-                    document.getElementById("statusMessage").innerText = "الرجاء سرعة تسليم التذكية للخدام لعرض النتيجة";
-                    document.getElementById("resultTable").style.display = "block";
-                    return;
-                }
+      <div class="note-box" id="noteBox">
+        <div class="note-title">✦ ملاحظة</div>
+        <div id="noteText"></div>
+      </div>
 
-                document.getElementById("statusMessage").innerText = "";
-                document.getElementById("resultTable").style.display = "block";
+    </div>
 
-                let tableBody = document.getElementById("gradesTable");
-                tableBody.innerHTML = "";
+  </div>
 
-                let subjects = [
-                    { name: "تنمية مهارات", score: student.score1, result: student.result1 },
-                    { name: "لاهوت مقارن جزء أول", score: student.score2, result: student.result2 },
-                    { name: "لاهوت روحى", score: student.score3, result: student.result3 },
-                    { name: "عقيدة جزء أول", score: student.score4, result: student.result4 },
-                    { name: "عقيدة جزء ثانى", score: student.score5, result: student.result5 },
-                    { name: "تاريخ كنيسة", score: student.score6, result: student.result6 }                    
-                ];
+  <div class="footer">
+    <span class="footer-cross">✝</span>
+    نظام عرض نتائج خدمة إعداد خدام
+    <span class="footer-cross">✝</span>
+  </div>
 
-                subjects.forEach(subject => {
-                    let row = document.createElement("tr");
+</div>
 
-                    if (subject.result === "محجوبة") {
-                        row.classList.add("weak-attendance");
-                    } else if (subject.result === "راسب") {
-                        row.classList.add("fail");
-                    } else if (subject.result === "ناجح") {
-                        row.classList.add("pass");
-                    }
+<script>
 
-                    let resultText = subject.result === "ناجح" ? subject.result + " ❤️💯" : subject.result;
+const students = [{"name":"الإسم","id":"الكود","code":"الرقم السرى","phone":"رقم التليفون","status":"التذكية","score1":"تنمية مهارات","result1":"الحالة","score2":"لاهوت مقارن جزء أول","result2":"الحالة","score3":"لاهوت روحى","result3":"الحالة","score4":"عقيدة جزء أول","result4":"الحالة","score5":"عقيدة جزء ثانى","result5":"الحالة","score6":"تاريخ كنيسة","result6":"الحالة"},{"name":"باسم وائل ناجح","id":24004,"code":"P4178","phone":201221084098,"status":"تمام","score1":23,"result1":"محجوبة","score2":22,"result2":"راسب","score3":29,"result3":"راسب","score4":19,"result4":"محجوبة","score5":20,"result5":"راسب","score6":25,"result6":"راسب"},{"name":"بافلي رافت فوزي","id":24005,"code":"P9356","phone":201271861999,"status":"تمام","score1":0,"result1":"محجوبة","score2":15,"result2":"راسب","score3":4,"result3":"محجوبة","score4":0,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":8,"result6":"محجوبة"},{"name":"ساندي سامي ملك","id":24015,"code":"P4786","phone":201270464291,"status":"تمام","score1":0,"result1":"محجوبة","score2":11,"result2":"راسب","score3":15,"result3":"راسب","score4":0,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"شيرى عازر جاد","id":24017,"code":"P9504","phone":201229682400,"status":"تمام","score1":0,"result1":"محجوبة","score2":11,"result2":"محجوبة","score3":22,"result3":"راسب","score4":10,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"كريم صبرى نصيف","id":24021,"code":"P8297","phone":201229960632,"status":"تمام","score1":48,"result1":"ناجح","score2":32,"result2":"ناجح","score3":51,"result3":"ناجح","score4":41,"result4":"محجوبة","score5":43,"result5":"ناجح","score6":43,"result6":"محجوبة"},{"name":"ماريان ناصر سمير","id":24025,"code":"P7526","phone":201227094728,"status":"تمام","score1":36,"result1":"محجوبة","score2":11,"result2":"راسب","score3":0,"result3":"محجوبة","score4":0,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"يوسف اسامة فوزي","id":24033,"code":"P2407","phone":201207277509,"status":"تمام","score1":34,"result1":"محجوبة","score2":32,"result2":"ناجح","score3":46,"result3":"ناجح","score4":24,"result4":"محجوبة","score5":30,"result5":"راسب","score6":29,"result6":"محجوبة"},{"name":"فيولا منير عطية","id":24038,"code":"P8059","phone":201208803058,"status":"تمام","score1":45,"result1":"محجوبة","score2":11,"result2":"راسب","score3":30,"result3":"راسب","score4":13,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"جورج سمير عاطف","id":24040,"code":"P1222","phone":201229794639,"status":"تمام","score1":48,"result1":"ناجح","score2":39,"result2":"ناجح","score3":44,"result3":"ناجح","score4":26,"result4":"محجوبة","score5":37,"result5":"ناجح","score6":53,"result6":"ناجح"},{"name":"ابانوب عماد موسي","id":25002,"code":"P4509","phone":201288225036,"status":"تمام","score1":26,"result1":"محجوبة","score2":17,"result2":"راسب","score3":36,"result3":"راسب","score4":18,"result4":"محجوبة","score5":40,"result5":"ناجح","score6":18,"result6":"محجوبة"},{"name":"ايريني اشرف جرجس","id":25006,"code":"P4738","phone":201288199329,"status":"تمام","score1":0,"result1":"محجوبة","score2":11,"result2":"راسب","score3":0,"result3":"محجوبة","score4":0,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"توماس هشام بدر","id":25011,"code":"P3705","phone":201274865896,"status":"تمام","score1":41,"result1":"محجوبة","score2":28,"result2":"راسب","score3":41,"result3":"راسب","score4":15,"result4":"محجوبة","score5":47,"result5":"ناجح","score6":37,"result6":"محجوبة"},{"name":"ساندرا عزمي عزت","id":25021,"code":"P6298","phone":201278963635,"status":"تمام","score1":30,"result1":"راسب","score2":25,"result2":"راسب","score3":38,"result3":"راسب","score4":36,"result4":"ناجح","score5":23,"result5":"راسب","score6":20,"result6":"محجوبة"},{"name":"ساندرا فادي فتحي ","id":25022,"code":"P7045","phone":201220682880,"status":"تمام","score1":46,"result1":"ناجح","score2":35,"result2":"ناجح","score3":48,"result3":"ناجح","score4":26,"result4":"محجوبة","score5":40,"result5":"ناجح","score6":8,"result6":"محجوبة"},{"name":"سيلفيا سمير صبحي","id":25025,"code":"P2743","phone":201285942121,"status":"تمام","score1":30,"result1":"محجوبة","score2":32,"result2":"ناجح","score3":45,"result3":"ناجح","score4":30,"result4":"محجوبة","score5":46,"result5":"ناجح","score6":36,"result6":"محجوبة"},{"name":"سيلفيا عزمي عزت","id":25026,"code":"P5081","phone":201276977658,"status":"تمام","score1":57,"result1":"ناجح","score2":46,"result2":"محجوبة","score3":60,"result3":"ناجح","score4":45,"result4":"ناجح","score5":55,"result5":"ناجح","score6":44,"result6":"محجوبة"},{"name":"شيري فليمون ناجح","id":25027,"code":"P4198","phone":201226160913,"status":"تمام","score1":33,"result1":"محجوبة","score2":41,"result2":"ناجح","score3":52,"result3":"ناجح","score4":45,"result4":"ناجح","score5":55,"result5":"ناجح","score6":57,"result6":"ناجح"},{"name":"فادي سمير سعيد","id":25028,"code":"P8264","phone":201270573322,"status":"تمام","score1":40,"result1":"محجوبة","score2":11,"result2":"راسب","score3":26,"result3":"راسب","score4":34,"result4":"محجوبة","score5":33,"result5":"محجوبة","score6":8,"result6":"محجوبة"},{"name":"فيرينا اميل جورجي","id":25029,"code":"P1623","phone":201227608917,"status":"تمام","score1":24,"result1":"محجوبة","score2":33,"result2":"محجوبة","score3":46,"result3":"ناجح","score4":40,"result4":"ناجح","score5":26,"result5":"راسب","score6":48,"result6":"ناجح"},{"name":"كاترين عماد ملاك","id":25031,"code":"P6342","phone":201274488100,"status":"تمام","score1":23,"result1":"محجوبة","score2":25,"result2":"محجوبة","score3":37,"result3":"راسب","score4":10,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":6,"result6":"محجوبة"},{"name":"كرستينا أشرف فهيم","id":25032,"code":"P3041","phone":201204883964,"status":"تمام","score1":25,"result1":"راسب","score2":26,"result2":"راسب","score3":32,"result3":"راسب","score4":0,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":6,"result6":"محجوبة"},{"name":"كيرلس عادل جاد","id":25033,"code":"P2308","phone":201202363869,"status":"تمام","score1":20,"result1":"محجوبة","score2":16,"result2":"راسب","score3":0,"result3":"محجوبة","score4":0,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"كيرلس ناصر راضي","id":25034,"code":"P7023","phone":201090263369,"status":"تمام","score1":33,"result1":"محجوبة","score2":18,"result2":"راسب","score3":31,"result3":"راسب","score4":34,"result4":"ناجح","score5":37,"result5":"راسب","score6":36,"result6":"محجوبة"},{"name":"مارتينا نصري بخيت","id":25036,"code":"P6851","phone":201220582684,"status":"تمام","score1":39,"result1":"محجوبة","score2":34,"result2":"ناجح","score3":40,"result3":"ناجح","score4":18,"result4":"محجوبة","score5":28,"result5":"محجوبة","score6":14,"result6":"محجوبة"},{"name":"مرية بطرس ثابت","id":25039,"code":"P2518","phone":201206685456,"status":"تمام","score1":41,"result1":"محجوبة","score2":41,"result2":"ناجح","score3":55,"result3":"ناجح","score4":43,"result4":"ناجح","score5":56,"result5":"ناجح","score6":56,"result6":"ناجح"},{"name":"ماريا ناجي وديع","id":25041,"code":"P3176","phone":201280063518,"status":"تمام","score1":26,"result1":"راسب","score2":39,"result2":"ناجح","score3":58,"result3":"ناجح","score4":37,"result4":"محجوبة","score5":42,"result5":"راسب","score6":55,"result6":"ناجح"},{"name":"ماريان عادل عريان","id":25042,"code":"P5894","phone":201273446219,"status":"تمام","score1":4,"result1":"محجوبة","score2":34,"result2":"ناجح","score3":51,"result3":"ناجح","score4":28,"result4":"محجوبة","score5":16,"result5":"راسب","score6":8,"result6":"محجوبة"},{"name":"مارينا كمال فهمي","id":25046,"code":"P2954","phone":201275368643,"status":"تمام","score1":39,"result1":"محجوبة","score2":34,"result2":"ناجح","score3":46,"result3":"ناجح","score4":14,"result4":"محجوبة","score5":36,"result5":"ناجح","score6":46,"result6":"ناجح"},{"name":"مايكل جرجس وصفي","id":25047,"code":"P1632","phone":201229678186,"status":"تمام","score1":23,"result1":"راسب","score2":18,"result2":"راسب","score3":37,"result3":"راسب","score4":21,"result4":"محجوبة","score5":3,"result5":"محجوبة","score6":5,"result6":"محجوبة"},{"name":"ملاك ميخائيل غطاس","id":25050,"code":"P2603","phone":201021746686,"status":"تمام","score1":23,"result1":"محجوبة","score2":27,"result2":"راسب","score3":41,"result3":"راسب","score4":24,"result4":"راسب","score5":19,"result5":"راسب","score6":23,"result6":"محجوبة"},{"name":"ميرام رامي صبحي","id":25053,"code":"P5239","phone":201225039993,"status":"تمام","score1":17,"result1":"محجوبة","score2":29,"result2":"محجوبة","score3":35,"result3":"ناجح","score4":23,"result4":"محجوبة","score5":20,"result5":"راسب","score6":27,"result6":"محجوبة"},{"name":"نورهان راضي حكيم","id":25060,"code":"P4729","phone":201270675951,"status":"تمام","score1":40,"result1":"محجوبة","score2":30,"result2":"راسب","score3":39,"result3":"راسب","score4":40,"result4":"ناجح","score5":40,"result5":"ناجح","score6":19,"result6":"محجوبة"},{"name":"هيلانا جرجس ذكري","id":25062,"code":"P3708","phone":201274956471,"status":"تمام","score1":7,"result1":"محجوبة","score2":16,"result2":"راسب","score3":22,"result3":"راسب","score4":27,"result4":"محجوبة","score5":10,"result5":"محجوبة","score6":8,"result6":"محجوبة"},{"name":"يؤانا ايمن رشدي","id":25063,"code":"P6947","phone":201203715638,"status":"تمام","score1":24,"result1":"راسب","score2":28,"result2":"ناجح","score3":42,"result3":"ناجح","score4":28,"result4":"محجوبة","score5":30,"result5":"راسب","score6":56,"result6":"ناجح"},{"name":"يؤانا سمير بدري","id":25064,"code":"P2035","phone":201274140990,"status":"تمام","score1":30,"result1":"راسب","score2":32,"result2":"ناجح","score3":45,"result3":"ناجح","score4":39,"result4":"ناجح","score5":23,"result5":"راسب","score6":48,"result6":"ناجح"},{"name":"يؤانا نسيم اسكندر","id":25066,"code":"P5271","phone":201274439547,"status":"تمام","score1":49,"result1":"ناجح","score2":45,"result2":"ناجح","score3":57,"result3":"ناجح","score4":47,"result4":"ناجح","score5":37,"result5":"ناجح","score6":53,"result6":"ناجح"},{"name":"يؤانا مجدي خليل","id":25067,"code":"P6184","phone":201226405887,"status":"تمام","score1":10,"result1":"محجوبة","score2":23,"result2":"راسب","score3":36,"result3":"راسب","score4":10,"result4":"محجوبة","score5":9,"result5":"محجوبة","score6":27,"result6":"محجوبة"},{"name":"ابانوب جرجس عبدالكريم","id":25071,"code":"P3756","phone":201201289573,"status":"تمام","score1":27,"result1":"راسب","score2":25,"result2":"راسب","score3":40,"result3":"راسب","score4":28,"result4":"راسب","score5":16,"result5":"راسب","score6":19,"result6":"محجوبة"},{"name":"بطرس عجبان بطرس","id":25077,"code":"P6471","phone":201203154056,"status":"تمام","score1":46,"result1":"محجوبة","score2":36,"result2":"ناجح","score3":49,"result3":"ناجح","score4":32,"result4":"ناجح","score5":41,"result5":"ناجح","score6":17,"result6":"محجوبة"},{"name":"بيشوي عطا نجيب","id":25079,"code":"P5283","phone":201284102878,"status":"تمام","score1":42,"result1":"راسب","score2":23,"result2":"راسب","score3":36,"result3":"راسب","score4":23,"result4":"محجوبة","score5":25,"result5":"محجوبة","score6":47,"result6":"ناجح"},{"name":"جرجس رأفت صبري","id":25082,"code":"P6574","phone":201285391757,"status":"تمام","score1":0,"result1":"محجوبة","score2":11,"result2":"راسب","score3":0,"result3":"محجوبة","score4":0,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"ريهام رمزي فهمي","id":25087,"code":"P8106","phone":201281518876,"status":"تمام","score1":3,"result1":"محجوبة","score2":11,"result2":"راسب","score3":25,"result3":"راسب","score4":11,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"ساندرا سمير صبحي","id":25089,"code":"P1342","phone":201271002869,"status":"تمام","score1":40,"result1":"محجوبة","score2":37,"result2":"ناجح","score3":50,"result3":"ناجح","score4":43,"result4":"ناجح","score5":44,"result5":"ناجح","score6":44,"result6":"ناجح"},{"name":"كاترين ايهاب ماهر","id":25093,"code":"P8927","phone":201286908692,"status":"تمام","score1":39,"result1":"راسب","score2":23,"result2":"راسب","score3":31,"result3":"راسب","score4":43,"result4":"ناجح","score5":42,"result5":"راسب","score6":51,"result6":"ناجح"},{"name":"كرستين وجدي ناشد","id":25094,"code":"P9283","phone":201228072322,"status":"تمام","score1":39,"result1":"راسب","score2":29,"result2":"راسب","score3":41,"result3":"راسب","score4":25,"result4":"محجوبة","score5":39,"result5":"راسب","score6":45,"result6":"محجوبة"},{"name":"كيرلس ظريف صبحي","id":25099,"code":"P7841","phone":201279927454,"status":"تمام","score1":36,"result1":"محجوبة","score2":34,"result2":"ناجح","score3":43,"result3":"ناجح","score4":25,"result4":"محجوبة","score5":32,"result5":"ناجح","score6":18,"result6":"محجوبة"},{"name":"مادونا فتحي زاهر","id":25100,"code":"P9604","phone":201203826643,"status":"تمام","score1":52,"result1":"ناجح","score2":44,"result2":"ناجح","score3":56,"result3":"ناجح","score4":38,"result4":"محجوبة","score5":46,"result5":"ناجح","score6":53,"result6":"ناجح"},{"name":"ماركو القمص انطون بسطة","id":25103,"code":"P1963","phone":201223556403,"status":"تمام","score1":29,"result1":"محجوبة","score2":38,"result2":"ناجح","score3":42,"result3":"ناجح","score4":30,"result4":"محجوبة","score5":34,"result5":"محجوبة","score6":17,"result6":"محجوبة"},{"name":"مارينا اشرف فهيم","id":25105,"code":"P5618","phone":201272078774,"status":"تمام","score1":24,"result1":"محجوبة","score2":15,"result2":"راسب","score3":18,"result3":"راسب","score4":0,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"ماريو ميلاد اسحاق","id":25107,"code":"P6829","phone":201555811974,"status":"تمام","score1":20,"result1":"محجوبة","score2":16,"result2":"راسب","score3":35,"result3":"راسب","score4":12,"result4":"محجوبة","score5":30,"result5":"راسب","score6":40,"result6":"ناجح"},{"name":"مريام رأفت داود","id":25109,"code":"P3186","phone":201289698810,"status":"تمام","score1":42,"result1":"ناجح","score2":26,"result2":"راسب","score3":39,"result3":"راسب","score4":28,"result4":"محجوبة","score5":42,"result5":"ناجح","score6":14,"result6":"محجوبة"},{"name":"ميرنا عماد عطية","id":25113,"code":"P8294","phone":201289970235,"status":"تمام","score1":43,"result1":"ناجح","score2":23,"result2":"راسب","score3":33,"result3":"راسب","score4":32,"result4":"محجوبة","score5":48,"result5":"ناجح","score6":53,"result6":"ناجح"},{"name":"مايكل عماد رمزي","id":25118,"code":"P4721","phone":201285250776,"status":"تمام","score1":49,"result1":"ناجح","score2":26,"result2":"راسب","score3":39,"result3":"راسب","score4":21,"result4":"محجوبة","score5":43,"result5":"ناجح","score6":39,"result6":"راسب"},{"name":"جوفاني القس برسوم سامي","id":25120,"code":"P9673","phone":201124858063,"status":"تمام","score1":26,"result1":"محجوبة","score2":25,"result2":"راسب","score3":38,"result3":"راسب","score4":20,"result4":"محجوبة","score5":32,"result5":"ناجح","score6":49,"result6":"ناجح"},{"name":"ماريز عاطف خلف","id":25122,"code":"P8750","phone":201224061137,"status":"تمام","score1":36,"result1":"راسب","score2":20,"result2":"راسب","score3":31,"result3":"راسب","score4":28,"result4":"محجوبة","score5":28,"result5":"راسب","score6":34,"result6":"ناجح"},{"name":"رامي فرج مليكة","id":25123,"code":"P4195","phone":201211545613,"status":"تمام","score1":45,"result1":"ناجح","score2":43,"result2":"ناجح","score3":56,"result3":"ناجح","score4":45,"result4":"ناجح","score5":43,"result5":"ناجح","score6":42,"result6":"محجوبة"},{"name":"جومانا نادر سمير","id":25126,"code":"P6051","phone":201222376319,"status":"تمام","score1":44,"result1":"ناجح","score2":39,"result2":"ناجح","score3":46,"result3":"ناجح","score4":33,"result4":"ناجح","score5":42,"result5":"ناجح","score6":55,"result6":"ناجح"},{"name":"جورجيت نعيم شحاتة","id":25130,"code":"P8052","phone":201283469183,"status":"تمام","score1":28,"result1":"محجوبة","score2":22,"result2":"راسب","score3":32,"result3":"راسب","score4":31,"result4":"راسب","score5":35,"result5":"راسب","score6":14,"result6":"محجوبة"},{"name":"روفينا يوسف وليم","id":25131,"code":"P7643","phone":201222921104,"status":"تمام","score1":25,"result1":"راسب","score2":39,"result2":"ناجح","score3":52,"result3":"ناجح","score4":36,"result4":"محجوبة","score5":8,"result5":"محجوبة","score6":14,"result6":"محجوبة"},{"name":"كيرلس أشرف صبحى","id":25132,"code":"P9405","phone":201221277724,"status":"تمام","score1":14,"result1":"محجوبة","score2":20,"result2":"راسب","score3":27,"result3":"راسب","score4":13,"result4":"محجوبة","score5":17,"result5":"راسب","score6":36,"result6":"محجوبة"},{"name":"فيلوباتير اميل جورج","id":25135,"code":"P2850","phone":201280075403,"status":"تمام","score1":20,"result1":"محجوبة","score2":22,"result2":"راسب","score3":13,"result3":"محجوبة","score4":25,"result4":"محجوبة","score5":13,"result5":"محجوبة","score6":18,"result6":"محجوبة"},{"name":"ماريز ماجد عجيب ","id":25143,"code":"P8497","phone":201285519063,"status":"تمام","score1":50,"result1":"ناجح","score2":44,"result2":"ناجح","score3":53,"result3":"ناجح","score4":35,"result4":"محجوبة","score5":39,"result5":"ناجح","score6":53,"result6":"ناجح"},{"name":"كيرلس اشرف سمير","id":25147,"code":"P4285","phone":201276764154,"status":"تمام","score1":47,"result1":"ناجح","score2":45,"result2":"ناجح","score3":53,"result3":"ناجح","score4":42,"result4":"محجوبة","score5":50,"result5":"ناجح","score6":45,"result6":"محجوبة"},{"name":"ملاك سامي عبدالملك","id":25163,"code":"P1579","phone":201274226750,"status":"تمام","score1":49,"result1":"ناجح","score2":34,"result2":"ناجح","score3":47,"result3":"ناجح","score4":35,"result4":"ناجح","score5":49,"result5":"ناجح","score6":49,"result6":"ناجح"},{"name":"شادى ايمن سمير","id":25169,"code":"P6270","phone":201285734426,"status":"تمام","score1":42,"result1":"محجوبة","score2":27,"result2":"راسب","score3":39,"result3":"راسب","score4":37,"result4":"محجوبة","score5":39,"result5":"ناجح","score6":50,"result6":"ناجح"},{"name":"مارتينا اشرف عدلي ","id":25171,"code":"P2917","phone":201278764676,"status":"تمام","score1":37,"result1":"محجوبة","score2":39,"result2":"ناجح","score3":53,"result3":"ناجح","score4":25,"result4":"محجوبة","score5":44,"result5":"راسب","score6":32,"result6":"محجوبة"},{"name":"مارتينا واصف موريس","id":25176,"code":"P4129","phone":201284706204,"status":"تمام","score1":38,"result1":"ناجح","score2":11,"result2":"راسب","score3":0,"result3":"محجوبة","score4":0,"result4":"محجوبة","score5":22,"result5":"محجوبة","score6":7,"result6":"محجوبة"},{"name":"انطونيوس لابان فهمي","id":25178,"code":"P1067","phone":201210369376,"status":"تمام","score1":43,"result1":"محجوبة","score2":17,"result2":"راسب","score3":21,"result3":"راسب","score4":32,"result4":"محجوبة","score5":34,"result5":"محجوبة","score6":18,"result6":"محجوبة"},{"name":"مارينا عزت عبد الفادى","id":25181,"code":"P8031","phone":201271905771,"status":"تمام","score1":28,"result1":"راسب","score2":27,"result2":"راسب","score3":33,"result3":"راسب","score4":9,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":0,"result6":"محجوبة"},{"name":"كرستين هلال فوزى","id":25187,"code":"P5617","phone":201220947756,"status":"تمام","score1":12,"result1":"محجوبة","score2":18,"result2":"راسب","score3":27,"result3":"راسب","score4":18,"result4":"محجوبة","score5":0,"result5":"محجوبة","score6":15,"result6":"محجوبة"},{"name":"ناردين ونجت فوكيه","id":25192,"code":"P3064","phone":201203826761,"status":"تمام","score1":10,"result1":"محجوبة","score2":23,"result2":"محجوبة","score3":30,"result3":"راسب","score4":16,"result4":"محجوبة","score5":22,"result5":"محجوبة","score6":30,"result6":"محجوبة"},{"name":"جرجس هاني ثابت ","id":25196,"code":"P1905","phone":201228101728,"status":"تمام","score1":29,"result1":"محجوبة","score2":23,"result2":"راسب","score3":13,"result3":"محجوبة","score4":25,"result4":"محجوبة","score5":46,"result5":"ناجح","score6":49,"result6":"ناجح"},{"name":"ميراى مقار القس يعقوب","id":26100,"code":"P1111","phone":201222202051,"status":"تمام","score1":24,"result1":"محجوبة","score2":0,"result2":"محجوبة","score3":15,"result3":"راسب","score4":31,"result4":"محجوبة","score5":36,"result5":"محجوبة","score6":35,"result6":"محجوبة"}];
 
-                    row.innerHTML = `
-                        <td>${subject.name}</td>
-                        <td>${subject.score}</td>
-                        <td>${resultText}</td>
-                    `;
+function hideAll() {
+  document.getElementById('errorMsg').style.display = 'none';
+  document.getElementById('warningMsg').style.display = 'none';
+  document.getElementById('studentResult').style.display = 'none';
+  document.getElementById('gradesSection').style.display = 'none';
+}
 
-                    tableBody.appendChild(row);
-                });
+function searchStudent() {
+  hideAll();
 
-                document.getElementById("resultTable").style.display = "table";
-            } else {
-                alert("لم يتم العثور على الطالب!");
-            }
-        }
+  const idVal = document.getElementById('studentId').value.trim();
+  const codeVal = document.getElementById('studentCode').value.trim();
 
+  if (!idVal || !codeVal) {
+    const err = document.getElementById('errorMsg');
+    err.textContent = '⚠ الرجاء إدخال الكود وكلمة السر';
+    err.style.display = 'block';
+    return;
+  }
 
-        
-    </script>
+  const id = Number(idVal);
+  let student;
 
+  if (codeVal === 'OOOO') {
+    student = students.find(s => s.id == id);
+  } else {
+    student = students.find(s => s.id == id && s.code == codeVal);
+  }
+
+  if (!student || typeof student.name !== 'string' || student.name === 'الإسم') {
+    const err = document.getElementById('errorMsg');
+    err.textContent = '⚠ لم يتم العثور على الطالب، تأكد من الكود وكلمة السر';
+    err.style.display = 'block';
+    return;
+  }
+
+  // Show student card
+  document.getElementById('studentName').textContent = student.name;
+  document.getElementById('studentIdDisplay').textContent = 'كود: ' + student.id;
+  document.getElementById('studentResult').style.display = 'block';
+
+  // Check تذكية
+  if (student.status !== 'تمام' && codeVal !== 'OOOO') {
+    document.getElementById('warningMsg').style.display = 'block';
+    return;
+  }
+
+  // Build grades
+  const subjects = [
+    { n: 'تنمية مهارات', s: student.score1, r: student.result1 },
+    { n: 'لاهوت مقارن جزء أول', s: student.score2, r: student.result2 },
+    { n: 'لاهوت روحى', s: student.score3, r: student.result3 },
+    { n: 'عقيدة جزء أول', s: student.score4, r: student.result4 },
+    { n: 'عقيدة جزء ثانى', s: student.score5, r: student.result5 },
+    { n: 'تاريخ كنيسة', s: student.score6, r: student.result6 },
+  ];
+
+  const list = document.getElementById('gradesList');
+  list.innerHTML = '';
+
+  subjects.forEach((sub, i) => {
+    let cls = '';
+    if (sub.r === 'ناجح') cls = 'pass';
+    else if (sub.r === 'راسب') cls = 'fail';
+    else cls = 'hidden';
+
+    const card = document.createElement('div');
+    card.className = 'grade-card ' + cls;
+    card.style.animationDelay = (i * 0.06) + 's';
+    card.innerHTML = `
+      <span class="subject-name">${sub.n}</span>
+      <span class="score-badge">${sub.s}</span>
+      <span class="status-pill">${sub.r}</span>
+    `;
+    list.appendChild(card);
+  });
+
+  document.getElementById('gradesSection').style.display = 'block';
+
+  // Scroll to result
+  setTimeout(() => {
+    document.getElementById('studentResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+// Enter key support
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') searchStudent();
+});
+
+</script>
 </body>
-
 </html>
