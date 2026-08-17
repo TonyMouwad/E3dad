@@ -766,7 +766,7 @@ html { scroll-behavior: smooth; }
         <div class="stat-item">
           <div class="stat-label">المجموع</div>
           <div class="stat-value" id="statTotal">—</div>
-          <div class="stat-sub">من 780</div>
+          <div class="stat-sub">من 360</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">النسبة</div>
@@ -1229,7 +1229,7 @@ function searchStudent() {
     const finalScore = getStudentValue(student, `sub${i}_final_score`);
     const finalStatus = getStudentValue(student, `sub${i}_final_status`);
 
-    const examScore = actualExam ?? writtenScore;
+    const examScore = writtenScore ?? actualExam;
     const examMax = Number(getStudentValue(student, `sub${i}_exam_max`) ?? EXAM_MAX[idx] ?? 30);
     const attMax  = Number(getStudentValue(student, `sub${i}_att_max`) ?? ATT_MAX[idx] ?? 20);
     const hwMax   = Number(getStudentValue(student, `sub${i}_hw_max`) ?? HW_MAX[idx] ?? 10);
